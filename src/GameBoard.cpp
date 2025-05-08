@@ -2,8 +2,8 @@
 #include <cstdlib>
 
 
-GameBoard::GameBoard(size_t columns, size_t records)
-    : Board(columns* records), columns(columns), records(records) {}
+GameBoard::GameBoard(size_t cols, size_t rows, Neighborhood* neighborhood, Boundary* boundary, LiveRules* rules)
+    : columns(cols), records(rows), Board(cols* rows), neighborhood(neighborhood), boundary(boundary), rules(rules) {}
 
 Cell& GameBoard::at(size_t r, size_t c) {
     return Board[r * columns + c];
@@ -22,24 +22,6 @@ void GameBoard::ChangeCellStatus(size_t r, size_t c) {
     at(r, c).setStatus(!current);
 }
 
-int GameBoard::CountNeighborAlive(size_t r, size_t c) {
-    int counter = 0;
-
-    for (int dr = -1; dr <= 1; dr++) {
-        for (int dc = -1; dc <= 1; dc++) {
-            if (dr == 0 && dc == 0) continue;
-
-            int nr = static_cast<int>(r) + dr;
-            int nc = static_cast<int>(c) + dc;
-
-            if (nr >= 0 && nc >= 0 && nr < static_cast<int>(records) && nc < static_cast<int>(columns)) {
-                if (at(nr, nc).getStatus()) counter++;
-            }
-        }
-    }
-
-    return counter;
-}
 
 void GameBoard::RewriteFrom(const GameBoard& copy) {
     this->Board = copy.Board;
@@ -48,17 +30,10 @@ void GameBoard::RewriteFrom(const GameBoard& copy) {
 void GameBoard::checkBoard(GameBoard& temp) {
     for (size_t i = 0; i < records; i++) {
         for (size_t j = 0; j < columns; j++) {
-            int live_neighbors = CountNeighborAlive(i, j);
+            
             bool alive = at(i, j).getStatus();
-            bool newStatus = false;
-
-            if (alive) {
-                newStatus = (live_neighbors == 2 || live_neighbors == 3);
-            }
-            else {
-                newStatus = (live_neighbors == 3);
-            }
-
+            int live_neighbors = neighborhood->countAliveNeighbors(*this, i, j);
+            bool newStatus = rules->changeedStatus(alive, live_neighbors);
             temp.at(i, j).setStatus(newStatus);
         }
     }
@@ -75,3 +50,36 @@ void GameBoard::randomGen() {
                 at(i, j).setStatus(false);
         }
 }
+
+void GameBoard::setNeighborhood(const Neighborhood* n)
+{
+    neighborhood = n;
+}
+
+void GameBoard::setBoundary(const Boundary* b)
+{
+    boundary = b;
+}
+
+void GameBoard::setLiveRules(const LiveRules* lr)
+{
+    rules = lr;
+}
+
+const Neighborhood* GameBoard::getNeighborhood()
+{
+    return neighborhood;
+}
+
+const Boundary* GameBoard::getBoundary()
+{
+    return boundary;
+}
+
+const LiveRules* GameBoard::getRules()
+{
+    return rules;
+}
+
+
+

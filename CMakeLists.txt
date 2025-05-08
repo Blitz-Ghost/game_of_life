@@ -3,7 +3,6 @@ project(GameOfLife)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Pobieramy SFML z GitHuba
 include(FetchContent)
 FetchContent_Declare(
     sfml
@@ -12,10 +11,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(sfml)
 
-# Tworzymy nasz executable
-add_executable(GameOfLife src/main.cpp "src/Cell.cpp" "src/GameBoard.cpp" "src/GameBoard.h" "src/Cell.h")
+add_executable(GameOfLife
+    src/main.cpp
+    src/Cell.cpp
+    src/GameBoard.cpp
+    src/Boundary.cpp
+    src/LiveRules.cpp
+    src/Neighbor.cpp
+)
 
-# Do³¹czamy nag³ówki i linkujemy biblioteki SFML
 target_link_libraries(GameOfLife
     PRIVATE
         sfml-graphics
@@ -23,7 +27,6 @@ target_link_libraries(GameOfLife
         sfml-system
 )
 
-# (opcjonalnie) poprawiamy widocznoœæ nag³ówków
 target_include_directories(GameOfLife
     PRIVATE
         ${sfml_SOURCE_DIR}/include
