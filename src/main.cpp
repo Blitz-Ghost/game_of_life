@@ -14,18 +14,8 @@ int main() {
     srand(time(0));
 
 
-    //rules
-    auto moore = new MooreNeighborhood();
-    auto vonNeumann = new VonNeumannNeighborhood();
-
-    auto deadBoundary = new DeadOutside();
-    auto loopedBoundary = new Looped();
-
-    auto standardRules = new StanrdardConway();
-    auto labirynthRules = new LabyrinthRules();
-
-    GameBoard* MainBoard = new GameBoard(cols,rows,moore,deadBoundary,standardRules);
-    GameBoard TempBoard(cols, rows, moore, deadBoundary, standardRules);
+    GameBoard* MainBoard = new GameBoard(cols,rows,make_unique<MooreNeighborhood>(), make_unique<DeadOutside>(), make_unique<StanrdardConway>());
+    BufferBoard TempBoard(cols, rows);
     bool started = false;
     int delay=100;
 
@@ -49,8 +39,7 @@ int main() {
             
 
                 if (event.key.code == sf::Keyboard::R) {                        //r - clearing the board
-                    delete MainBoard;
-                    GameBoard* MainBoard = new GameBoard(cols, rows, moore, deadBoundary, standardRules);
+                    MainBoard->reset();
                 }
 
                 if (event.key.code == sf::Keyboard::G) {                        //g - generating random board
@@ -67,38 +56,33 @@ int main() {
                 else if (event.key.code == sf::Keyboard::Down) {                //down arrow - slower simulation
                     if (delay < 1000) delay += 10;
                 }
-
-                if (event.key.code == sf::Keyboard::N) {                        //n - changing neighboorhood strategy
- 
-                    if (MainBoard->getNeighborhood() == moore) {
-                        MainBoard->setNeighborhood(vonNeumann);
-                    }
-                    else {
-                        MainBoard->setNeighborhood(moore);
-                    }
+                
+                if (event.key.code == sf::Keyboard::Num1) {
+                    MainBoard->setNeighborhood(make_unique<MooreNeighborhood>());
                 }
 
-                if (event.key.code == sf::Keyboard::B) {                        //b - changing boundary behavior
-
-
-                    if (MainBoard->getBoundary() == deadBoundary) {
-                        MainBoard->setBoundary(loopedBoundary);
-                    }
-                    else {
-                        MainBoard->setBoundary(deadBoundary);
-                    }
+                if (event.key.code == sf::Keyboard::Q) {                      
+                    MainBoard->setNeighborhood(make_unique<VonNeumannNeighborhood>());
+                    
                 }
 
-                if (event.key.code == sf::Keyboard::M) {                        //m - changing live rules
-
-                    if (MainBoard->getRules() == standardRules) {
-                        MainBoard->setLiveRules(labirynthRules);
-                    }
-                    else {
-                        MainBoard->setLiveRules(standardRules);
-                    }
+                if (event.key.code == sf::Keyboard::Num2) {
+                    MainBoard->setBoundary(make_unique<DeadOutside>());
                 }
-        
+
+                if (event.key.code == sf::Keyboard::W) {
+                    MainBoard->setBoundary(make_unique<Looped>());
+                }
+
+                if (event.key.code == sf::Keyboard::Num3) {
+                    MainBoard->setLiveRules(make_unique<StanrdardConway>());
+                }
+
+                if (event.key.code == sf::Keyboard::E) {
+                    MainBoard->setLiveRules(make_unique<LabyrinthRules>());
+
+                }
+                
             }
             
         }
@@ -125,13 +109,6 @@ int main() {
     }
 
     delete MainBoard;
-    delete moore;
-    delete vonNeumann;
-
-    delete deadBoundary;
-    delete loopedBoundary;
-
-    delete standardRules;
-    delete labirynthRules;
+    
     return 0;
 }

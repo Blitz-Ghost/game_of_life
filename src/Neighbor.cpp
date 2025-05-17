@@ -1,11 +1,11 @@
 #include "Neighbor.h"
 #include "GameBoard.h"
+#include "Boundary.h"
 
 
-int MooreNeighborhood::countAliveNeighbors(GameBoard& board, size_t r, size_t c) const {
+int MooreNeighborhood::countAliveNeighbors(Boundary* boundary, BoardAccessor& board, size_t r, size_t c) const {
     int counter = 0;
-    const auto* boundary = board.getBoundary();
-    if (!boundary) return 0;
+    
 
     for (int dr = -1; dr <= 1; dr++)
         for (int dc = -1; dc <= 1; dc++)
@@ -15,10 +15,9 @@ int MooreNeighborhood::countAliveNeighbors(GameBoard& board, size_t r, size_t c)
     return counter;
 }
 
-int VonNeumannNeighborhood::countAliveNeighbors(GameBoard& board, size_t r, size_t c) const {
+int VonNeumannNeighborhood::countAliveNeighbors(Boundary* boundary, BoardAccessor& board, size_t r, size_t c) const {
     int counter = 0;
-    const auto* boundary = board.getBoundary();
-    if (!boundary) return 0;
+    
 
     int directions[4][2] = { {-1,0}, {1,0}, {0,-1}, {0,1} };
     for (auto& [dr, dc] : directions)

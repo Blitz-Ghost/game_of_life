@@ -7,7 +7,7 @@ private:
 public:
 	Cell();
 
-	bool getStatus();
+	bool getStatus() const;
 
 	void setStatus(bool Status);
 

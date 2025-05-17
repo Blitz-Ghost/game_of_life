@@ -2,7 +2,7 @@
 
 Cell::Cell() :IsAlive(false) {}
 
-bool Cell::getStatus() {
+bool Cell::getStatus() const{
 		return IsAlive;
 	}
 

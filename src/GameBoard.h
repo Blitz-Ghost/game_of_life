@@ -5,50 +5,77 @@
 #include "LiveRules.h"
 #include "Boundary.h"
 #include "Neighbor.h"
+#include <memory>
 
 
 
 using namespace std;
 
-class GameBoard {
+class BufferBoard {
+private:
+	vector<Cell> Board;
+	size_t columns;
+	size_t records;
+
+public:
+	BufferBoard(size_t cols, size_t rows) : columns(cols), records(rows), Board(cols* rows) {}
+
+	Cell& at(size_t r, size_t c);
+
+	const Cell& at(size_t r, size_t c) const;
+
+};
+
+class BoardAccessor {
+public:
+	virtual const Cell& at(size_t row, size_t col) const = 0;
+	virtual size_t GetRecords() const = 0;
+	virtual size_t GetColumns() const = 0;
+
+	virtual ~BoardAccessor() = default;
+};
+
+class GameBoard : public BoardAccessor {
 private:
 	vector <Cell> Board;
 	size_t columns;
 	size_t records;
 	
-	const Neighborhood* neighborhood = nullptr;
-	const Boundary* boundary = nullptr;
-	const LiveRules* rules = nullptr;
+	unique_ptr<Neighborhood> neighborhood;
+	unique_ptr<Boundary> boundary;
+	unique_ptr<LiveRules> rules;
+	
 	
 public:
-	GameBoard(size_t cols, size_t rows, Neighborhood* neighborhood, Boundary* boundary, LiveRules* rules);
+	explicit GameBoard(size_t cols, size_t rows, unique_ptr<Neighborhood> init_neighborhood, unique_ptr<Boundary> init_boundary, unique_ptr<LiveRules> init_rules);
 
 
 	Cell& at(size_t r, size_t c);
 
-	size_t GetColumns();
+	const Cell& at(size_t r, size_t c) const override;
 
-	size_t GetRecords();
+	size_t GetColumns() const override;
+
+	size_t GetRecords() const override;
 
 	void ChangeCellStatus(size_t r, size_t c);
 
-	void RewriteFrom(const GameBoard& copy);
+	void RewriteFrom(const BufferBoard& copy);
 
-	void checkBoard(GameBoard& temp);
+	void checkBoard(BufferBoard& temp);
 
 	void randomGen();
 
-	void setNeighborhood(const Neighborhood* n);
+	void reset();
 
-	void setBoundary(const Boundary* b);
+	void setBoundary(unique_ptr<Boundary> newBoundary);
 
-	void setLiveRules(const LiveRules* lr);
+	void setNeighborhood(unique_ptr<Neighborhood> newNeighborhood);
 
-	const Neighborhood* getNeighborhood();
+	void setLiveRules(unique_ptr<LiveRules> newRules);
 
-	const Boundary* getBoundary();
-
-	const LiveRules* getRules();
 };
+
+
 
 
