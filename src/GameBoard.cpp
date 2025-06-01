@@ -7,16 +7,25 @@ GameBoard::GameBoard(size_t cols, size_t rows, unique_ptr<Neighborhood> init_nei
     Board.resize(columns * records);
 }
 
+
+GameBoard::GameBoard(size_t cols, size_t rows)
+    : GameBoard(cols, rows,
+        std::make_unique<MooreNeighborhood>(),
+        std::make_unique<DeadOutside>(),
+        std::make_unique<StanrdardConway>()) {}
+
 Cell& GameBoard::at(size_t r, size_t c) {
+    static Cell nullCell; 
     if (r >= records || c >= columns) {
-        throw std::out_of_range("Index out of range");
+        return nullCell;
     }
     return Board[r * columns + c];
 }
 
 const Cell& GameBoard::at(size_t r, size_t c) const {
+    static Cell nullCell;
     if (r >= records || c >= columns) {
-        throw std::out_of_range("Index out of range");
+        return nullCell;
     }
     return Board[r * columns + c];
 }
@@ -85,15 +94,17 @@ void GameBoard::setLiveRules(unique_ptr<LiveRules> newRules) {
 
 
 Cell& BufferBoard::at(size_t r, size_t c) {
+    static Cell nullCell;
     if (r >= records || c >= columns) {
-        throw std::out_of_range("Index out of range");
+        return nullCell;
     }
     return Board[r * columns + c];
 }
 
 const Cell& BufferBoard::at(size_t r, size_t c) const {
+    static Cell nullCell;
     if (r >= records || c >= columns) {
-        throw std::out_of_range("Index out of range");
+        return nullCell;
     }
     return Board[r * columns + c];
 }

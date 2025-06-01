@@ -48,6 +48,7 @@ private:
 	
 public:
 	explicit GameBoard(size_t cols, size_t rows, unique_ptr<Neighborhood> init_neighborhood, unique_ptr<Boundary> init_boundary, unique_ptr<LiveRules> init_rules);
+    GameBoard(size_t cols, size_t rows);
 
 
 	Cell& at(size_t r, size_t c);
