@@ -13,7 +13,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(cols * cellSize, rows * cellSize), "Game of Life");
     srand(time(0));
 
-
+// NO RAW POINTERS! 
     GameBoard* MainBoard = new GameBoard(cols,rows,make_unique<MooreNeighborhood>(), make_unique<DeadOutside>(), make_unique<StanrdardConway>());
     BufferBoard TempBoard(cols, rows);
     bool started = false;
@@ -94,6 +94,7 @@ int main() {
         }
         window.clear(sf::Color::White);
 
+        // I would prefer to encapsulate this ugly details like iterating in double loop, direct setting position with calculated size etc
         for (int y = 0; y < rows; ++y) {
             for (int x = 0; x < cols; ++x) {
                 sf::RectangleShape cell(sf::Vector2f(cellSize - 1, cellSize - 1));
