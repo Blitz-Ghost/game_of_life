@@ -34,7 +34,7 @@ public:
 
 	virtual ~BoardAccessor() = default;
 };
-
+// Not sure this BoardAccessor abstraction makes sense in this project. It seems to break the KISS rule
 class GameBoard : public BoardAccessor {
 private:
 	vector <Cell> Board;
