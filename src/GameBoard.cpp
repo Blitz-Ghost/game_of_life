@@ -53,9 +53,10 @@ void GameBoard::RewriteFrom(const BufferBoard& copy) {
 }
 
 void GameBoard::checkBoard(BufferBoard& temp) {
+    // you repeat the same double loop many times (in other methods). PLease think, how to replace those two lines and logic with some extracted logic (think about lambdas or function objects)
     for (size_t i = 0; i < records; i++) {
         for (size_t j = 0; j < columns; j++) {
-            
+            // just a hint - isAlive would be a better name. And make it const
             bool alive = at(i, j).getStatus();
             int live_neighbors = neighborhood->countAliveNeighbors(boundary.get(), *this, i, j);
             bool newStatus = rules->changeedStatus(alive, live_neighbors);
@@ -79,12 +80,11 @@ void GameBoard::randomGen() {
 void GameBoard::reset() {
     for (auto& cell : Board) cell.setStatus(false);
 }
-
 void GameBoard::setBoundary(unique_ptr<Boundary> newBoundary) {
     boundary = move(newBoundary);
 }
 
-void GameBoard::setNeighborhood(unique_ptr<Neighborhood> newNeighborhood) {
+void GameBoard::setNeighborhood(unique_ptr<Neighborhood> newNeighborhood) {    
     neighborhood = move(newNeighborhood);
 }
 
